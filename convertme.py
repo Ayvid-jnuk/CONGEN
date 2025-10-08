@@ -4,17 +4,19 @@ from base_conv import BaseConverter
 import pandas as pd
 from datetime import datetime
 import os
-
+from BAC import BAC
+import numpy as np
+import matplotlib.pyplot as plt
 
 st.set_page_config(
     page_title="CONGEN ToolBox",
     page_icon="CONGEN.png",
     layout="centered"
 )
-st.title("CONGEN ToolBox : Unit Converter (v1.0.2)", anchor="center")
+st.title("CONGEN ToolBox : Unit Converter (v1.0.3)", anchor="center")
 st.write("Convert between various units of measurement.")
 
-tab1, tab2, tab3 = st.tabs(["Unit Conversion", "Base Conversion", "About & Feedback"])
+tab1, tab2, tab3, tab4 = st.tabs(["Unit Conversion", "Base Conversion", "BAC Calculator","About & Feedback"])
 
 
 with tab1:
@@ -75,11 +77,62 @@ with tab2:
         except Exception as e:
             st.error(f"Error Occured: {e}")
 
+with tab3:
+    st.header("Blood Alcohol Content (BAC) Calculator")
+    st.markdown("Calculate your estimated Blood Alcohol Content (BAC) based on your drink intake and personal characteristics.")
+    weight = st.number_input("Enter your weight (in kg):", min_value=20.0, max_value=300.0)
+    gender = st.selectbox("Gender:", ["Male", "Female"])
+    alcohol_percent = st.number_input("Alcohol Percentage of Drink (%):", min_value=0.1, max_value=100.0)
+    volume = st.number_input("Volume of each drink (in Litres):", min_value=0.01, max_value=6.0)
+    st.caption("E.g., 0.33L for a standard beer bottle, 0.15L for a glass of wine, 0.044L for a shot of spirits.")
+    quantity = st.number_input("Number of drinks consumed:", min_value=0.1, max_value=40.0)
+    hours = st.number_input("Hours since last drink:", min_value=0.0, max_value=48.0)
+
+    show_graph = st.checkbox("Show BAC Level Graph overtime since last drink(Approx.)")
+
+    if st.button("Calculate BAC"):
+        try:
+            user = BAC(weight=weight, gender=gender)
+            bac_result = user.calculate_bac(alc_percent=alcohol_percent, volume=volume, quantity=quantity, hours=hours)
+            st.success(f"Estimated BAC: {bac_result:.4f}%")
+
+            if bac_result < 0.03:
+                st.success("You are likely sober.")
+            elif 0.03 <= bac_result < 0.08:
+                st.warning("Mild impairment. Caution advised.")
+            elif 0.08 <= bac_result < 0.15:
+                st.error("Legally impaired. Do not drive.")
+            else:
+                st.error("Severe impairment. Seek medical attention if necessary.")
+
+            if show_graph:
+
+                time_points = np.linspace(hours, hours + 24, 100)
+                bac_values = [user.calculate_bac(alcohol_percent, volume, quantity, t) for t in time_points]
+
+                plt.figure(figsize=(10, 5))
+                plt.plot(time_points, bac_values, label='Estimated BAC', color='blue')
+                plt.axhline(y=0.08, color='red', linestyle='--', label='Legal Limit (0.08%)')
+                plt.axhline(y=0.03, color='orange', linestyle='--', label='Sober Limit (0.03%)')
+                plt.xlabel('Hours since last drink')
+                plt.ylabel('Estimated BAC (%)')
+                plt.title('Estimated BAC Level Over Time')
+                plt.legend()
+                plt.grid(True)
+                plt.tight_layout()
+                st.pyplot(plt)
+
+                st.caption("NOTE: This graph is an approximation [Average metabolism rate: (~0.015% BAC reduction per hour)] and should not be used to absolutely determine fitness to drive or operate machinery. " \
+                "Individual metabolism rates vary.")
+
+        except Exception as e:
+            st.error(f"Error in BAC calculation (Please enter the details correctly): {e}")
+                
 
 def clear_feedback():
     st.session_state.feedback_text = ""
 
-with tab3:
+with tab4:
     st.header("About & Feedback")
     st.markdown("""
     **CONGEN ToolBox** is a reliable, user-friendly web app that converts between a wide range of physical units and number bases quickly and accurately.
@@ -125,6 +178,6 @@ with tab3:
             clear_feedback()
         else:
             st.error("Please write something before submission...")
-            
+
 
 
