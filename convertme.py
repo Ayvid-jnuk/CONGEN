@@ -14,7 +14,7 @@ st.set_page_config(
     page_icon="CONGEN.png",
     layout="centered"
 )
-st.title("CONGEN ToolBox : Unit Converter (v1.0.3)", anchor="center")
+st.title("CONGEN ToolBox : Unit Converter (v1.0.4)", anchor="center")
 st.write("Convert between various units of measurement.")
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Unit Conversion", "Base Conversion", "BAC Calculator", "Morse Code","About & Feedback"])
@@ -152,8 +152,8 @@ with tab4:
                 st.error(f"Error Occured: {e}")
 
 
-def clear_feedback():
-    st.session_state.feedback_text = ""
+# def clear_feedback():
+#     st.session_state.feedback_text = ""
 
 with tab5:
     st.header("About & Feedback")
@@ -162,7 +162,10 @@ with tab5:
 
     ### Features
     - Temperature, length, weight, volume, area, pressure, and energy unit conversions.  
-    - Binary, octal, decimal, and hexadecimal base conversions.  
+    - Binary, octal, decimal, and hexadecimal base conversions. 
+    - Blood Alcohol Content (BAC) calculator based on user's personal inputs.
+    - Morse code translator (text to Morse and vice-versa).  
+    - Intuitive interface with easy-to-use dropdowns and input fields. 
     - Custom decimal precision for unit results.  
     - Clear input validation and error handling.  
 
@@ -172,35 +175,36 @@ with tab5:
     ### Deployment
     This app is designed for deployment on platforms like Render.com or Streamlit Cloud, ensuring continuous availability and accessibility.
 
-    *If you would like private access or to discuss permissions for the source code, please contact the maintainer via feedback form.*
+    *If you would like access or discuss permissions for the source code, please contact the developer via email: dbar0052@student.monash.edu.*
 
     ### Feedback
+    I am a first-year student and this is one of my first projects I've launched publicly.
     Any sort of feedback for reporting bugs, suggesting ideas and collaboration will be highly appreciated.
 
     ### Note
-    This project was created purely for fun and as a way to learn Python. If demand or traffic grows, future updates and improvements will definitely be considered.
+    This project was created purely for fun and as a way to learn Python. If it gains traction, I’d love to continue improving and expanding it.
 
     Built for accuracy and ease of use — your trusted conversion toolbox.
     """)
 
-    feedback = st.text_area("Your Feedback / Suggestions: (Anything helps!)", height=150, key="feedback_text")
+    # feedback = st.text_area("Your Feedback / Suggestions: (Anything helps!)", height=150, key="feedback_text")
 
-    def save_feedback(feedback_text):
-        df = pd.DataFrame([{
-            "timestamp": datetime.now().isoformat(),
-            "feedback": feedback_text
-        }])
-        file_exists = os.path.isfile("feedback.csv")
-        df.to_csv("feedback.csv", mode="a", header=not file_exists, index=False)
+    # def save_feedback(feedback_text):
+    #     df = pd.DataFrame([{
+    #         "timestamp": datetime.now().isoformat(),
+    #         "feedback": feedback_text
+    #     }])
+    #     file_exists = os.path.isfile("feedback.csv")
+    #     df.to_csv("feedback.csv", mode="a", header=not file_exists, index=False)
 
-    if st.button("Submit Feedback"):
-        if feedback.strip():
-            save_feedback(feedback)
-            st.success("Thank you for your feedback!")
-            st.info(f"Saved feedback:\n\n{feedback}")
-            clear_feedback()
-        else:
-            st.error("Please write something before submission...")
+    # if st.button("Submit Feedback"):
+    #     if feedback.strip():
+    #         save_feedback(feedback)
+    #         st.success("Thank you for your feedback!")
+    #         st.info(f"Saved feedback:\n\n{feedback}")
+    #         clear_feedback()
+    #     else:
+    #         st.error("Please write something before submission...")
 
 
 
