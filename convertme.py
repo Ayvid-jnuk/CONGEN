@@ -7,6 +7,7 @@ import os
 from BAC import BAC
 import numpy as np
 import matplotlib.pyplot as plt
+from morse import text_to_morse, morse_to_text
 
 st.set_page_config(
     page_title="CONGEN ToolBox",
@@ -16,7 +17,7 @@ st.set_page_config(
 st.title("CONGEN ToolBox : Unit Converter (v1.0.3)", anchor="center")
 st.write("Convert between various units of measurement.")
 
-tab1, tab2, tab3, tab4 = st.tabs(["Unit Conversion", "Base Conversion", "BAC Calculator","About & Feedback"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Unit Conversion", "Base Conversion", "BAC Calculator", "Morse Code","About & Feedback"])
 
 
 with tab1:
@@ -128,11 +129,33 @@ with tab3:
         except Exception as e:
             st.error(f"Error in BAC calculation (Please enter the details correctly): {e}")
                 
+with tab4:
+    st.header("Morse Code Converter")
+    st.markdown("Convert text to Morse code and vice-versa.")
+    morse_option = st.selectbox("Select conversion type:", ["Text to Morse", "Morse to Text"])
+    input_label = "Enter the value to convert:" if morse_option == "Text to Morse" else "Enter the Morse code to convert:"
+    input_value_morse = st.text_area(input_label, height=100)
+    st.caption("For Morse to Text: Separate Morse characters with spaces and words with '/'. E.g., .... . .-.. .-.. --- / .-- --- .-. .-..")
+    if morse_option == "Text to Morse":
+        if st.button("Convert to Morse"):
+            try:
+                morse_result = text_to_morse(input_value_morse)
+                st.success(f"Morse Code: {morse_result}")
+            except Exception as e:
+                st.error(f"Error Occured: {e}")
+    else:
+        if st.button("Convert to Text"):
+            try:
+                text_result = morse_to_text(input_value_morse)
+                st.success(f"Text: {text_result}")
+            except Exception as e:
+                st.error(f"Error Occured: {e}")
+
 
 def clear_feedback():
     st.session_state.feedback_text = ""
 
-with tab4:
+with tab5:
     st.header("About & Feedback")
     st.markdown("""
     **CONGEN ToolBox** is a reliable, user-friendly web app that converts between a wide range of physical units and number bases quickly and accurately.
