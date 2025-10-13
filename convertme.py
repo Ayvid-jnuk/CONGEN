@@ -10,7 +10,9 @@ from BMI import bmi_estimator
 from calorie import calorie_estimator
 from hydration import hydration_estimator
 from bencode import bencode_encode, bencode_decode
+from caesar import caesar_cipher
 import ast
+
 
 st.set_page_config(
     page_title="CONGEN ToolBox",
@@ -149,7 +151,32 @@ if section == "General Tools":
 
 elif section == "Security Tools":
     st.sidebar.success("You are in the Security Tools section...")
-    st.warning("No tools available currently. Stay tuned for future updates!")
+    tab1 = st.tabs(["Caesar Cipher"])
+
+    with tab1[0]:
+        st.header("Caesar Cipher")
+        st.markdown("Encrypt or decrypt text using the Caesar cipher technique.")
+        caesar_option = st.selectbox("Select operation:", ["Encrypt", "Decrypt"])
+        input_text = st.text_area("Enter the text:", height=150)
+        shift_value = st.number_input("Enter the shift value (integer):", min_value=1, max_value=25, value=3)
+        
+        if caesar_option == "Encrypt":
+            if st.button("Encrypt Text"):
+                try:
+                    encrypted_text = caesar_cipher(input_text, shift_value, mode='encrypt')
+                    st.success("Encrypted Text:")
+                    st.code(encrypted_text, language="text")
+                except Exception as e:
+                    st.error(f"Error Occured: {e}")
+        else:
+            if st.button("Decrypt Text"):
+                try:
+                    decrypted_text = caesar_cipher(input_text, shift_value, mode='decrypt')
+                    st.success("Decrypted Text:")
+                    st.code(decrypted_text, language="text")
+                except Exception as e:
+                    st.error(f"Error Occured: {e}")
+
 
 elif section == "Monitor Tools":
     st.sidebar.success("You are in the Monitor Tools section...")
