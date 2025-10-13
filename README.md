@@ -1,6 +1,6 @@
-# CONGEN ToolBox: Unit & Base Conversion App (v1.0.4)
+# CONGEN : GSMA ToolBox (v1.0.6)
 
-**CONGEN ToolBox** is a reliable and easy-to-use web app that swiftly converts a broad range of physical units and number bases with precision.
+**CONGEN ToolBox** is a reliable and easy-to-use web app where you can access various basic yet useful tools.
 
 ---
 
