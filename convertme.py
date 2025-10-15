@@ -45,16 +45,31 @@ if section == "General Tools":
             "Kilograms to Pounds": UnitConverter.kilograms_to_pounds,
             "Pounds to Kilograms": UnitConverter.pounds_to_kilograms
         }
+        units_map = {
+            "Celsius to Fahrenheit": ("°C", "°F"),
+            "Fahrenheit to Celsius": ("°F", "°C"),
+            "Celsius to Kelvin": ("°C", "K"),
+            "Kelvin to Celsius": ("K", "°C"),
+            "Fahrenheit to Kelvin": ("°F", "K"),
+            "Kelvin to Fahrenheit": ("K", "°F"),
+            "Meters to Feet": ("m", "ft"),
+            "Feet to Meters": ("ft", "m"),
+            "Kilometers to Miles": ("km", "mi"),
+            "Miles to Kilometers": ("mi", "km"),
+            "Kilograms to Pounds": ("kg", "lbs"),
+            "Pounds to Kilograms": ("lbs", "kg")
+        }
 
         option = st.selectbox("Select conversion type:", list(conversion_options.keys()))
+        input_unit, output_unit = units_map[option]
         a = st.slider("Till how many decimal places you want the output? (0-6)", min_value=0, max_value=6, value=2)
-        input_value = st.number_input("Enter value to convert:", format=f"%.{a}f")
+        input_value = st.number_input(f"Enter value to convert: {input_unit}", format=f"%.{a}f")
 
         if st.button("Convert Unit"):
             try:
                 conversion_function = conversion_options[option]
                 result = conversion_function(input_value)
-                st.success(f"Converted value: {result:.{a}f}")
+                st.success(f"Converted value: {result:.{a}f} {output_unit}")
             except Exception as e:
                 st.error(f"Error during conversion: {e}")
 
