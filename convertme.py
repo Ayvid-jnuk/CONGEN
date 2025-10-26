@@ -12,6 +12,7 @@ from hydration import hydration_estimator
 from bencode import bencode_encode, bencode_decode
 from caesar import caesar_cipher
 from wscraper import scrape_website
+from bodyweight import evaluate_weight
 import ast
 
 
@@ -197,7 +198,7 @@ elif section == "Security Tools":
 
 elif section == "Monitor Tools":
     st.sidebar.success("You are in the Monitor Tools section...")
-    tab1, tab2, tab3, tab4 = st.tabs(["BAC Calculator", "BMI Calculator", "Calorie Estimator", "Hydration Estimator"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["BAC Calculator", "BMI Calculator", "Calorie Estimator", "Hydration Estimator", "Body Weight Tracker"])
 
     with tab1:
         st.header("Blood Alcohol Content (BAC) Calculator")
@@ -310,6 +311,59 @@ elif section == "Monitor Tools":
                     st.info("This is the recommended amount of water to stay adequately hydrated based on your inputs.")
             except Exception as e:
                 st.error(f"Error in hydration estimation (Please enter the details correctly): {e}")
+    with tab5:
+        st.header("Body Weight Tracker")
+        st.markdown("""
+                    ### Keen on losing or gaining weight?  
+
+                    Enter a few personal traits to:  
+
+                        - Check if your desired weight is healthy for your height.  
+                        - Get a recommended weight range for your height.  
+                        - Visualize your weight progress over time with a simple graph.  
+                        - Receive simple diet advice to reach your goals.  
+                    """)
+        st.info("Note: This is a basic weight tracker and does not replace professional medical advice.")
+
+        height = st.number_input("Enter your height (in m):", min_value=0.1, max_value=350.0, key="tracker_height")
+        current_weight = st.number_input("Enter your current weight (in kg):", min_value=1.0, max_value=500.0, key="tracker_current_weight")
+        desired_weight = st.number_input("Enter your desired weight (in kg):", min_value=1.0, max_value=500.0, key="tracker_desired_weight")
+        current_age = st.number_input("Enter your age (in years):", min_value=1.0, max_value=120.0, key="tracker_age")
+        user_gender = st.selectbox("Gender:", options=["Male", "Female"], key="tracker_gender")
+        if user_gender == "Female" and current_age >= 21:
+            pregnancy = st.selectbox("Are you pregnant?", options=["Yes", "No"], key="tracker_pregnancy")
+        else:
+            pregnancy = "No"
+        activity_level = st.selectbox("Activity Level:", ["Low", "Moderate", "High", "Extreme"], key="tracker_activity_level")
+
+        if st.button("Evaluate Weight"):
+            results = evaluate_weight(height=height,
+                                      current_weight=current_weight,
+                                      desired_weight=desired_weight,
+                                      age=current_age,  
+                                      gender=user_gender,
+                                      activity_level=activity_level,
+                                      pregnancy=pregnancy)
+            
+            st.subheader("ANALYSIS RESULTS: ")
+            st.write(f"**Current BMI:** {results['current_bmi']:.2f} ({results['current_status']})")
+            st.write(f"**Desired BMI:** {results['desired_bmi']:.2f} ({results['desired_status']})")
+            st.write(f"**Healthy Weight Range for your Height:** {results['healthy_range'][0]:.2f} kg - {results['healthy_range'][1]:.2f} kg")
+            st.write(f"**Basal Metabolic Rate (BMR):** {results['bmr']:.2f} calories/day")
+            st.write(f"**Total Daily Energy Expenditure (TDEE):** {results['tdee']:.2f} calories/day")
+            st.write(f"**Diet Tips:** {results['tips']}")
+
+            st.subheader("Weight Progress Graph:")
+            st.info("Available soon in the next version...")
+            # x_vals, y_vals = results['graph_data']
+            # plt.figure(figsize=(10, 5))
+            # plt.plot(x_vals, y_vals, marker='o', linestyle='-', color='green')
+            # plt.xlabel('Days')
+            # plt.ylabel('Weight (kg)')
+            # plt.title('Estimated Weight Progress Over 90 Days')
+            # plt.grid(True)
+            # st.pyplot(plt)
+
 
 elif section == "Advance Tools":
     st.sidebar.success("You are in the Advance Tools section...")
