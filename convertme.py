@@ -11,6 +11,7 @@ from calorie import calorie_estimator
 from hydration import hydration_estimator
 from bencode import bencode_encode, bencode_decode
 from caesar import caesar_cipher
+from wscraper import scrape_website
 import ast
 
 
@@ -92,6 +93,7 @@ if section == "General Tools":
 
         base_option = st.selectbox("Select base conversion type:", list(base_conversion_options.keys()))
         input_value_base = st.text_input("Enter the value to convert:")
+        st.info("Only positive integers are supported")
         st.caption("For binary: use only 0 and 1 | Hex: 0-9 A-F | Octal: 0-7 | Decimal: non-negative integers")
 
         if st.button("Convert Base"):
@@ -311,36 +313,82 @@ elif section == "Monitor Tools":
 
 elif section == "Advance Tools":
     st.sidebar.success("You are in the Advance Tools section...")
-    st.warning("No tools available currently. Stay tuned for future updates!")
+    tab1 = st.tabs(["Web Scraper"])
+    with tab1[0]:
+        st.header("Web Scraper")
+        st.markdown("This tool allows you to scrape and extract data from web pages. Enter a URL to fetch and display its content.")
+        st.warning("Note: Ensure you have permission to scrape the target website and comply with its terms of service.")
+
+        url = st.text_input("Enter the URL of the webpage to scrape:", "https://")
+
+        st.text("Select the type of data to extract:")
+        title_checkbox = st.checkbox("Page Title", value=True)
+        headings_checkbox = st.checkbox("Headings (H1-H6)")
+        paragraphs_checkbox = st.checkbox("Paragraphs")
+        links_checkbox = st.checkbox("Links")
+        images_checkbox = st.checkbox("Images")
+
+        if st.button("Scrape Webpage"):
+            try:
+                results = []
+                if title_checkbox:
+                    title_result = scrape_website(url, "Title")
+                    results.append(f"### Page Title:\n{title_result}\n")
+
+                if headings_checkbox:
+                    headings_result = scrape_website(url, "All Headings (H1-H6)")
+                    results.append(f"### Headings:\n{headings_result}\n")
+
+                if paragraphs_checkbox:
+                    paragraphs_result = scrape_website(url, "All Paragraphs")
+                    results.append(f"### Paragraphs:\n{paragraphs_result}\n")
+
+                if links_checkbox:
+                    links_result = scrape_website(url, "All Links")
+                    results.append(f"### Links:\n{links_result}\n")
+
+                if images_checkbox:
+                    images_result = scrape_website(url, "Images")
+                    results.append(f"### Images:\n{images_result}\n")
+
+                if results:
+                    st.markdown("\n---\n".join(results))
+                else:
+                    st.info("Please select at least one data type to extract.")
+
+            except Exception as e:
+                st.error(f"Error during web scraping: {e}")
 
 elif section == "About & Feedback":
     st.header("About & Feedback")
     st.markdown("""
-    **CONGEN ToolBox** is a reliable, user-friendly web app that converts between a wide range of physical units and number bases quickly and accurately.
-
-    ### Features
+    :red[**CONGEN ToolBox**] is a reliable, user-friendly web app that contains various tools for daily use, advance use or dev use.
+    :green[### Features]
+    - Structured section-based navigation via sidebar for easy access to different tools.
     - Temperature, length, weight, volume, area, pressure, and energy unit conversions.  
     - Binary, octal, decimal, and hexadecimal base conversions. 
-    - Blood Alcohol Content (BAC) calculator based on user's personal inputs.
+    - Bencode : Encode & Decode.
+    - Blood Alcohol Content (BAC) calculator based on user's personal inputs with *visuals*.
+    - BMI, Calorie and Hydration Calculator.
     - Morse code translator (text to Morse and vice-versa).  
     - Intuitive interface with easy-to-use dropdowns and input fields. 
     - Custom decimal precision for unit results.  
     - Clear input validation and error handling.  
 
-    ### Accessing the App
+    :green[### Accessing the App]
     The app is hosted online and publicly accessible via a web browser. No installation or technical knowledge is needed — simply visit the deployed URL to start converting.
 
-    ### Deployment
+    :green[### Deployment]
     This app is designed for deployment on platforms like Render.com or Streamlit Cloud, ensuring continuous availability and accessibility.
 
     *If you would like access or discuss permissions for the source code, please contact the developer via email: dbar0052@student.monash.edu.*
 
-    ### Feedback
+    :green[### Feedback]
     I am a first-year student and this is one of my first projects I've launched publicly.
     Any sort of feedback for reporting bugs, suggesting ideas and collaboration will be highly appreciated.
 
-    ### Note
-    This project was created purely for fun and as a way to learn Python. If it gains traction, I’d love to continue improving and expanding it.
+    :green[### Note]
+    This project was created purely for fun and as a way to learn Python. If it gains traction, I would love to continue improving and expanding it.
 
     Built for accuracy and ease of use — your trusted conversion toolbox.
     """)
