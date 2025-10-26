@@ -20,7 +20,7 @@ st.set_page_config(
     page_icon="CONGEN.png",
     layout="centered"
 )
-st.title("CONGEN : GSMA ToolBox (v1.0.6)", anchor="center")
+st.title("CONGEN : GSMA ToolBox (v1.0.7)", anchor="center")
 st.write("Access various tools easily...")
 
 section = st.sidebar.radio("Select Tool:", ["General Tools", "Security Tools", "Monitor Tools", "Advance Tools", "About & Feedback"])
